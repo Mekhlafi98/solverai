@@ -1,10 +1,4 @@
 #!/usr/bin/env python
-
-# manage.py
-# This line is a comment and does nothing
-import os
-os.system("python setup.py build_ext --pg-config /path/to/pg_config build")
-
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
