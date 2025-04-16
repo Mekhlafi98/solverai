@@ -21,7 +21,7 @@ def handle_upload(request):
             
             # Process with Gemini
             genai.configure(api_key=settings.GEMINI_API_KEY)
-            model = genai.GenerativeModel('gemini-pro')
+            model = genai.GenerativeModel('gemini-2.0-flash')
             
             # Read syllabus content
             syllabus_content = syllabus_file.read().decode('utf-8')
