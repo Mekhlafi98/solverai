@@ -1,0 +1,19 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload History</title>
+</head>
+<body>
+    <h1>Upload History</h1>
+    {% for question in questions %}
+    <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;">
+        <p><strong>Date:</strong> {{ question.created_at }}</p>
+        <p><strong>Question:</strong> {{ question.extracted_text }}</p>
+        <p><strong>Answer:</strong> {{ question.answer }}</p>
+        <img src="{{ question.image.url }}" alt="Question" style="max-width: 200px">
+    </div>
+    {% endfor %}
+    <p><a href="{% url 'upload' %}">Upload New</a></p>
+</body>
+</html>

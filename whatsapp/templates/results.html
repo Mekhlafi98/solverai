@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+</head>
+<body>
+    <h1>Results</h1>
+    <div>
+        <h2>Question Image</h2>
+        <img src="{{ question.image.url }}" alt="Question" style="max-width: 500px">
+    </div>
+    <div>
+        <h2>Extracted Question</h2>
+        <p>{{ question.extracted_text }}</p>
+    </div>
+    <div>
+        <h2>Answer</h2>
+        <p>{{ question.answer }}</p>
+    </div>
+    <p>
+        <a href="{% url 'upload' %}">Upload Another</a> |
+        <a href="{% url 'history' %}">View History</a>
+    </p>
+</body>
+</html>

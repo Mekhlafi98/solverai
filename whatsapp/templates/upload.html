@@ -1,0 +1,23 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Syllabus and Question</title>
+</head>
+<body>
+    <h1>Upload Files</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>
+            <label>Syllabus:</label>
+            <input type="file" name="syllabus" required>
+        </p>
+        <p>
+            <label>Question Image:</label>
+            <input type="file" name="question" accept="image/*" required>
+        </p>
+        <button type="submit">Process</button>
+    </form>
+    <p><a href="{% url 'history' %}">View History</a></p>
+</body>
+</html>
