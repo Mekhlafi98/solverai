@@ -14,25 +14,33 @@ def handle_upload(request):
         if syllabus_file and question_image:
             # Save syllabus
             syllabus = Syllabus.objects.create(file=syllabus_file)
-
-            # Extract text from image
-            img = Image.open(question_image)
-            question_text = pytesseract.image_to_string(img)
-
-            # Process with Gemini
+            
+            # Configure Gemini
             genai.configure(api_key=settings.GEMINI_API_KEY)
-            model = genai.GenerativeModel('gemini-2.0-flash')
-
+            model = genai.GenerativeModel('gemini-pro-vision')
+            
             # Read syllabus content
             syllabus_content = syllabus_file.read().decode('utf-8')
-
-            prompt = f"""
-            Based on this arabic syllabus content: {syllabus_content}
-            Answer this question: {question_text}
-            """
-
-            response = model.generate_content(prompt)
+            
+            # Process image for Gemini
+            img = Image.open(question_image)
+            
+            # Generate content with both image and text
+            response = model.generate_content([
+                "Extract and answer the question from this image. Use the following syllabus content as context for the answer: " + syllabus_content,
+                img
+            ])
+            
+            # Extract answer
             answer = response.text
+            
+            # Save question image for display
+            question = Question.objects.create(
+                syllabus=syllabus,
+                image=question_image,
+                extracted_text=answer.split('\n')[0],  # First line usually contains the extracted question
+                answer=answer
+            )
 
             # Save question and response
             question = Question.objects.create(syllabus=syllabus,
