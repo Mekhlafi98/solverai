@@ -5,6 +5,8 @@ from .models import Syllabus, Question
 from PIL import Image
 import pytesseract
 
+from django.core.files.base import ContentFile
+
 
 def handle_upload(request):
     if request.method == 'POST':
@@ -12,45 +14,39 @@ def handle_upload(request):
         question_image = request.FILES.get('question')
 
         if syllabus_file and question_image:
-            # Save syllabus
-            syllabus = Syllabus.objects.create(file=syllabus_file)
+            # Read file content ONCE
+            syllabus_raw = syllabus_file.read()
+            syllabus_content = syllabus_raw.decode('utf-8', errors='ignore')
+
+            # Create syllabus object and save content and file
+            syllabus = Syllabus.objects.create(content=syllabus_content)
+            syllabus.file.save(syllabus_file.name, ContentFile(syllabus_raw))
 
             # Configure Gemini
             genai.configure(api_key=settings.GEMINI_API_KEY)
             model = genai.GenerativeModel('gemini-1.5-flash')
 
-            # Read syllabus content
-            syllabus_content = syllabus_file.read().decode('utf-8')
-            syllabus.content = syllabus_content
-            syllabus.save()
-
             # Process image for Gemini
             img = Image.open(question_image)
 
+            # Extract only question
             response = model.generate_content([
                 "Please extract only the question text from this image. Do not answer it. Return the question in Arabic if it's in Arabic, otherwise return it as-is.",
                 img
             ])
-            question_text = response.text
-            
-            # Generate content with both image and text
+            question_text = response.text.strip()
+
+            # Generate answer
             response = model.generate_content([
-                "استخرج السؤال من هذه الصورة، ثم أجب عليه باللغة العربية بالاعتماد فقط على محتوى المنهج التالي. إذا لم تجد إجابة حرفية، استخدم أقرب محتوى متعلق للإجابة بشكل منطقي. لا تخرج عن نطاق المنهج.\n\n"
-                + syllabus_content, img
+                "استخرج السؤال من هذه الصورة، ثم أجب عليه باللغة العربية بالاعتماد فقط على محتوى المنهج التالي. إذا لم تجد إجابة دقيقة، استخدم أقرب محتوى متعلق بالإجابة بطريقة منطقية وضمن نطاق المنهج. حاول إعطاء إجابة مقاربة لأكثر محتوى مرتبط بالسؤال.\n\n"+ syllabus_content, img
             ])
+            answer = response.text.strip()
 
-
-
-            # Extract answer
-            answer = response.text
-
-            # Use only this:
-            question = Question.objects.create(
-                syllabus=syllabus,
-                image=question_image,
-                extracted_text=question_text.strip(),
-                answer=answer.strip()
-            )
+            # Save question
+            question = Question.objects.create(syllabus=syllabus,
+                                               image=question_image,
+                                               extracted_text=question_text,
+                                               answer=answer)
 
             return redirect('results', question_id=question.id)
 
