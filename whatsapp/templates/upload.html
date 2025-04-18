@@ -23,8 +23,48 @@
         </p>
         <p>
             <label>Question Image:</label>
-            <input type="file" name="question" accept="image/*" required>
+            <input type="file" name="question" accept="image/*" id="fileInput" required>
+            <div id="pasteArea" style="border: 2px dashed #ccc; padding: 20px; margin: 10px 0; text-align: center; cursor: pointer;">
+                Click here or paste image (Ctrl+V)
+            </div>
+            <img id="previewImage" style="max-width: 300px; display: none; margin-top: 10px;">
         </p>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const pasteArea = document.getElementById('pasteArea');
+                const fileInput = document.getElementById('fileInput');
+                const previewImage = document.getElementById('previewImage');
+
+                // Handle paste events
+                document.addEventListener('paste', function(e) {
+                    const items = e.clipboardData.items;
+                    for (let item of items) {
+                        if (item.type.indexOf('image') !== -1) {
+                            const file = item.getAsFile();
+                            const dt = new DataTransfer();
+                            dt.items.add(file);
+                            fileInput.files = dt.files;
+                            previewImage.src = URL.createObjectURL(file);
+                            previewImage.style.display = 'block';
+                            break;
+                        }
+                    }
+                });
+
+                // Handle file input change
+                fileInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        previewImage.src = URL.createObjectURL(this.files[0]);
+                        previewImage.style.display = 'block';
+                    }
+                });
+
+                // Make paste area clickable
+                pasteArea.addEventListener('click', function() {
+                    fileInput.click();
+                });
+            });
+        </script>
         <p>
             <label>Custom Prompt (Optional):</label><br>
             <textarea name="prompt" rows="4" cols="50" placeholder="Extract and answer the question from this image based on the syllabus content"></textarea>
