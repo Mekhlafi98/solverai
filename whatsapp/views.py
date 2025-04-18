@@ -95,9 +95,13 @@ def handle_upload(request):
 
     extracted_question_text = ""
     try:
+        # Convert uploaded file to PIL Image for Gemini API
+        pil_image = PILImage.open(question_image_file)
+
+        # Direct API calls
         question_extraction_response = model.generate_content([
             "Extract only the question text from this image. Do not answer it. Extract exactly as shown, preserving the original language.",
-            question_image_file  # Pass the Django file object here
+            pil_image
         ])
         extracted_question_text = question_extraction_response.text.strip()
     except Exception as e:
@@ -109,9 +113,12 @@ def handle_upload(request):
 
     answer_text = ""
     try:
+        # Convert uploaded file to PIL Image for Gemini API
+        pil_image = PILImage.open(question_image_file)
+
         answer_response = model.generate_content([
             f"{custom_prompt}\n\nSyllabus content: {syllabus_content}",
-            question_image_file  # Pass the Django file object here
+            pil_image
         ])
         answer_text = answer_response.text.strip()
     except Exception as e:
