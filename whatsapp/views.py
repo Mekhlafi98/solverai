@@ -60,10 +60,13 @@ def handle_upload(request):
         # Get custom prompt
         custom_prompt = request.POST.get('prompt', "Extract and answer the question from this image based on the syllabus content")
         
+        # Convert uploaded file to PIL Image
+        img = Image.open(question_image)
+        
         # Direct API calls
         question_response = model.generate_content([
             "Extract only the question text from this image. Do not answer it. Extract exactly as shown, preserving the original language.",
-            question_image
+            img
         ])
         
         if not custom_prompt:
