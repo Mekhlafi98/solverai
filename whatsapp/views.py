@@ -16,51 +16,57 @@ def handle_upload(request):
         existing_syllabus_id = request.POST.get('existing_syllabus')
         question_image = request.FILES.get('question')
 
-        if question_image and (syllabus_file or existing_syllabus_id):
-            if syllabus_file:
-                # Read file content ONCE
-                syllabus_raw = syllabus_file.read()
-                syllabus_content = syllabus_raw.decode('utf-8', errors='ignore')
+        if not question_image:
+            return render(request, 'upload.html', {'syllabi': syllabi, 'error': 'Question image is required'})
 
-                # Create syllabus object and save content and file
-                syllabus = Syllabus.objects.create(content=syllabus_content)
-                syllabus.file.save(syllabus_file.name, ContentFile(syllabus_raw))
-            else:
+        # Configure Gemini first
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        # Process image
+        img = Image.open(question_image)
+        
+        # Get or create syllabus
+        if syllabus_file:
+            syllabus_raw = syllabus_file.read()
+            syllabus_content = syllabus_raw.decode('utf-8', errors='ignore')
+            syllabus = Syllabus.objects.create(content=syllabus_content)
+            syllabus.file.save(syllabus_file.name, ContentFile(syllabus_raw))
+        elif existing_syllabus_id:
+            try:
                 syllabus = Syllabus.objects.get(id=existing_syllabus_id)
+                syllabus_content = syllabus.content
+            except Syllabus.DoesNotExist:
+                return render(request, 'upload.html', {'syllabi': syllabi, 'error': 'Selected syllabus not found'})
+        else:
+            return render(request, 'upload.html', {'syllabi': syllabi, 'error': 'Please select or upload a syllabus'})
 
-            # Configure Gemini
-            genai.configure(api_key=settings.GEMINI_API_KEY)
-            model = genai.GenerativeModel('gemini-1.5-flash')
+        # Get custom prompt
+        custom_prompt = request.POST.get('prompt', "Extract and answer the question from this image based on the syllabus content")
+        
+        # Direct API calls
+        question_response = model.generate_content([
+            "Please extract only the question text from this image. Do not answer it. Return the question in Arabic if it's in Arabic, otherwise return it as-is.",
+            img
+        ])
+        
+        answer_response = model.generate_content([
+            f"{custom_prompt}\n\nSyllabus content:\n{syllabus_content}",
+            img
+        ])
 
-            # Process image for Gemini
-            img = Image.open(question_image)
+        # Create question
+        question = Question.objects.create(
+            syllabus=syllabus,
+            image=question_image,
+            extracted_text=question_response.text.strip(),
+            answer=answer_response.text.strip(),
+            prompt=custom_prompt
+        )
 
-            # Extract only question
-            response = model.generate_content([
-                "Please extract only the question text from this image. Do not answer it. Return the question in Arabic if it's in Arabic, otherwise return it as-is.",
-                img
-            ])
-            question_text = response.text.strip()
+        return redirect('results', question_id=question.id)
 
-            # Get custom prompt or use default
-            custom_prompt = request.POST.get('prompt', "Extract and answer the question from this image based on the syllabus content")
-            
-            # Generate answer
-            response = model.generate_content([
-                custom_prompt + "\n\nSyllabus content:\n" + syllabus_content, 
-                img
-            ])
-            answer = response.text.strip()
-
-            # Save question
-            question = Question.objects.create(syllabus=syllabus,
-                                               image=question_image,
-                                               extracted_text=question_text,
-                                               answer=answer)
-
-            return redirect('results', question_id=question.id)
-
-    return render(request, 'upload.html')
+    return render(request, 'upload.html', {'syllabi': syllabi})
 
 
 def results(request, question_id):
