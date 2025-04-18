@@ -63,7 +63,7 @@ def handle_upload(request):
         # Direct API calls
         question_response = model.generate_content([
             "Extract only the question text from this image. Do not answer it. Extract exactly as shown, preserving the original language.",
-            img
+            question_image
         ])
         
         if not custom_prompt:
