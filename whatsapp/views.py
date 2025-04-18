@@ -28,10 +28,26 @@ def handle_upload(request):
         
         # Get or create syllabus
         if syllabus_file:
-            syllabus_raw = syllabus_file.read()
-            syllabus_content = syllabus_raw.decode('utf-8', errors='ignore')
-            syllabus = Syllabus.objects.create(content=syllabus_content)
-            syllabus.file.save(syllabus_file.name, ContentFile(syllabus_raw))
+            try:
+                syllabus_raw = syllabus_file.read()
+                # Check if it's a PDF file
+                if syllabus_file.name.lower().endswith('.pdf'):
+                    import PyPDF2
+                    from io import BytesIO
+                    pdf_reader = PyPDF2.PdfReader(BytesIO(syllabus_raw))
+                    syllabus_content = ""
+                    for page in pdf_reader.pages:
+                        syllabus_content += page.extract_text() + "\n"
+                else:
+                    syllabus_content = syllabus_raw.decode('utf-8', errors='ignore')
+                
+                syllabus = Syllabus.objects.create(content=syllabus_content)
+                syllabus.file.save(syllabus_file.name, ContentFile(syllabus_raw))
+            except Exception as e:
+                return render(request, 'upload.html', {
+                    'syllabi': syllabi,
+                    'error': f'Error processing file: {str(e)}'
+                })
         elif existing_syllabus_id:
             try:
                 syllabus = Syllabus.objects.get(id=existing_syllabus_id)
