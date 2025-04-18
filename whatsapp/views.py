@@ -9,18 +9,24 @@ from django.core.files.base import ContentFile
 
 
 def handle_upload(request):
+    syllabi = Syllabus.objects.all().order_by('-uploaded_at')
+    
     if request.method == 'POST':
         syllabus_file = request.FILES.get('syllabus')
+        existing_syllabus_id = request.POST.get('existing_syllabus')
         question_image = request.FILES.get('question')
 
-        if syllabus_file and question_image:
-            # Read file content ONCE
-            syllabus_raw = syllabus_file.read()
-            syllabus_content = syllabus_raw.decode('utf-8', errors='ignore')
+        if question_image and (syllabus_file or existing_syllabus_id):
+            if syllabus_file:
+                # Read file content ONCE
+                syllabus_raw = syllabus_file.read()
+                syllabus_content = syllabus_raw.decode('utf-8', errors='ignore')
 
-            # Create syllabus object and save content and file
-            syllabus = Syllabus.objects.create(content=syllabus_content)
-            syllabus.file.save(syllabus_file.name, ContentFile(syllabus_raw))
+                # Create syllabus object and save content and file
+                syllabus = Syllabus.objects.create(content=syllabus_content)
+                syllabus.file.save(syllabus_file.name, ContentFile(syllabus_raw))
+            else:
+                syllabus = Syllabus.objects.get(id=existing_syllabus_id)
 
             # Configure Gemini
             genai.configure(api_key=settings.GEMINI_API_KEY)

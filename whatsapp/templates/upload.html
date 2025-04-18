@@ -9,8 +9,17 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <p>
-            <label>Syllabus:</label>
-            <input type="file" name="syllabus" required>
+            <label>Choose existing syllabus or upload new:</label><br>
+            <select name="existing_syllabus">
+                <option value="">-- Upload new syllabus --</option>
+                {% for syllabus in syllabi %}
+                    <option value="{{ syllabus.id }}">{{ syllabus.file.name }} ({{ syllabus.uploaded_at|date:"Y-m-d H:i" }})</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>
+            <label>Or upload new syllabus:</label>
+            <input type="file" name="syllabus">
         </p>
         <p>
             <label>Question Image:</label>
