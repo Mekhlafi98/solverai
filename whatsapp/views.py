@@ -46,10 +46,13 @@ def handle_upload(request):
         
         # Direct API calls
         question_response = model.generate_content([
-            "Please extract only the question text from this image. Do not answer it. Return the question in Arabic if it's in Arabic, otherwise return it as-is.",
+            "Extract only the question text from this image. Do not answer it. Extract exactly as shown, preserving the original language.",
             img
         ])
         
+        if not custom_prompt:
+            custom_prompt = "Please analyze the following question image and provide a detailed answer based on the provided syllabus content. If specific information is not found, use the most relevant content from the syllabus to construct a logical answer."
+            
         answer_response = model.generate_content([
             f"{custom_prompt}\n\nSyllabus content:\n{syllabus_content}",
             img
