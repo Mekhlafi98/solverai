@@ -31,9 +31,28 @@
         <p>{{ question.answer }}</p>
     </div>
     <div class="content-section">
-        <h2>Syllabus Content</h2>
-        <p>{{ question.syllabus.content }}</p>
+        <h2>
+            Syllabus Content 
+            <button onclick="toggleSyllabus()" class="toggle-btn">Show/Hide</button>
+        </h2>
+        <div id="syllabusContent" style="display: none;">
+            <p>{{ question.syllabus.content }}</p>
+        </div>
     </div>
+    <script>
+        function toggleSyllabus() {
+            const content = document.getElementById('syllabusContent');
+            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+    <style>
+        .toggle-btn {
+            font-size: 14px;
+            padding: 5px 10px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
     <p>
         <a href="{% url 'upload' %}">Upload Another</a> |
         <a href="{% url 'history' %}">View History</a>
