@@ -16,6 +16,10 @@
             <label>Question Image:</label>
             <input type="file" name="question" accept="image/*" required>
         </p>
+        <p>
+            <label>Custom Prompt (Optional):</label><br>
+            <textarea name="prompt" rows="4" cols="50" placeholder="Extract and answer the question from this image based on the syllabus content"></textarea>
+        </p>
         <button type="submit">Process</button>
     </form>
     <p><a href="{% url 'history' %}">View History</a></p>

@@ -36,9 +36,13 @@ def handle_upload(request):
             ])
             question_text = response.text.strip()
 
+            # Get custom prompt or use default
+            custom_prompt = request.POST.get('prompt', "Extract and answer the question from this image based on the syllabus content")
+            
             # Generate answer
             response = model.generate_content([
-                "استخرج السؤال من هذه الصورة، ثم أجب عليه باللغة العربية بالاعتماد فقط على محتوى المنهج التالي. إذا لم تجد إجابة دقيقة، استخدم أقرب محتوى متعلق بالإجابة بطريقة منطقية وضمن نطاق المنهج. حاول إعطاء إجابة مقاربة لأكثر محتوى مرتبط بالسؤال.\n\n"+ syllabus_content, img
+                custom_prompt + "\n\nSyllabus content:\n" + syllabus_content, 
+                img
             ])
             answer = response.text.strip()
 

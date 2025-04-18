@@ -10,6 +10,7 @@ class Syllabus(models.Model):
 class Question(models.Model):
     syllabus = models.ForeignKey(Syllabus, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='questions/')
+    prompt = models.TextField(default="Extract and answer the question from this image based on the syllabus content")
     extracted_text = models.TextField()
     answer = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
