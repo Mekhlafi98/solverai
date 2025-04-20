@@ -162,3 +162,8 @@ cython_debug/
 # Nix
 /result
 /result-*
+
+# media
+/media/questions/*
+/media/syllabi/*
+
