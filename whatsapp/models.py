@@ -15,6 +15,9 @@ class Question(models.Model):
     answer = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return f"Question {self.id} - {self.extracted_text[:50]}"
+
 
 class AppSettings(models.Model):
     # Prompt Settings

@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-4ju2n@$f9d0c=h)_g0lbb%k9&@rf(xa$d$g$&5ri$uf)*gev^4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [".replit.dev", ".replit.app"]
+ALLOWED_HOSTS = [".replit.dev", ".replit.app", "localhost", "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = ["https://*.replit.dev", "https://*.replit.app"]
 
 # Application definition
@@ -131,4 +131,12 @@ APPEND_SLASH = True
 
 import os
 
-GEMINI_API_KEY = os.environ['GOOGLE_API_KEY']
+# GEMINI_API_KEY = os.environ['GOOGLE_API_KEY']
+GEMINI_API_KEY = 'AIzaSyCO7pAGZ5Jl1PIA7ZCtV5DB3sW7safOyz8'
+
+TELEGRAM_BOT_TOKEN = "7668730533:AAEU49WuNBKI7uF9saQInXACOjG4VkZW9IM"
+TELEGRAM_WEBHOOK_URL = ""  # Leave blank for polling
+TELEGRAM_WEBHOOK_PORT = 8443  # Only used if webhook
+DJANGO_IMAGE_UPLOAD_URL = "http://127.0.0.1:8528/whatsapp/api/upload/"  # Your Django endpoint
+TELEGRAM_AUTH_TOKEN = "your-auth-token-if-needed"  # Optional header
+
