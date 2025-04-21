@@ -131,10 +131,9 @@ APPEND_SLASH = True
 
 import os
 
-# GEMINI_API_KEY = os.environ['GOOGLE_API_KEY']
-GEMINI_API_KEY = 'AIzaSyCO7pAGZ5Jl1PIA7ZCtV5DB3sW7safOyz8'
+GEMINI_API_KEY = os.environ['GOOGLE_API_KEY']
 
-TELEGRAM_BOT_TOKEN = "7668730533:AAEU49WuNBKI7uF9saQInXACOjG4VkZW9IM"
+TELEGRAM_BOT_TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
 TELEGRAM_WEBHOOK_URL = ""  # Leave blank for polling
 TELEGRAM_WEBHOOK_PORT = 8443  # Only used if webhook
 DJANGO_IMAGE_UPLOAD_URL = "http://127.0.0.1:8528/whatsapp/api/upload/"  # Your Django endpoint
