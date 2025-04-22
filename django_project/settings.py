@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,.replit.dev,.replit.app").split(",")
 
-# CSRF_TRUSTED_ORIGINS = ["https://*.replit.dev", "https://*.replit.app", "https://huggingface.co/"]
+CSRF_TRUSTED_ORIGINS = ["https://*.replit.dev", "https://*.replit.app", "https://huggingface.co"]
 
 # Application definition
 
