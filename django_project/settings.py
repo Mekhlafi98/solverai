@@ -119,6 +119,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_ROOT = os.getenv('STATIC_ROOT', os.path.join(BASE_DIR, 'staticfiles'))
+
 
 # Gemini API Key
 GEMINI_API_KEY = 'your-api-key-here'  # Set this in your secrets
