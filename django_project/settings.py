@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,.replit.dev,.replit.app").split(",")
 
-CSRF_TRUSTED_ORIGINS = ["https://*.replit.dev", "https://*.replit.app"]
+# CSRF_TRUSTED_ORIGINS = ["https://*.replit.dev", "https://*.replit.app", "https://huggingface.co/"]
 
 # Application definition
 
@@ -144,3 +144,23 @@ DJANGO_IMAGE_UPLOAD_URL = "http://127.0.0.1:3000/whatsapp/api/upload/"  # Your D
 TELEGRAM_AUTH_TOKEN = "your-auth-token-if-needed"  # Optional header
 
 OCR_API_TOKEN = os.environ['OCR_API_TOKEN']
+import os
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',  # Can be adjusted as per your requirement
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # Set this as 'INFO' or 'ERROR' for less verbose logs
+            'propagate': True,
+        },
+    },
+}
