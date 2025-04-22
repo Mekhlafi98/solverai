@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 sm:p-6">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-4 sm:p-8">
+        <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">Upload History</h1>
+
+        {% if questions %}
+            <div class="space-y-6">
+                {% for question in questions %}
+                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <p class="text-sm text-gray-500"><strong>Date:</strong> {{ question.created_at }}</p>
+                    <p class="mt-2 text-gray-700 break-words"><strong>Question:</strong> {{ question.extracted_text }}</p>
+                    <p class="mt-2 text-gray-700 break-words"><strong>Answer:</strong> {{ question.answer }}</p>
+                    <div class="mt-4">
+                        <img src="{{ question.image.url }}" 
+                             alt="Question Image" 
+                             class="rounded-lg w-full max-w-xs sm:max-w-sm md:max-w-md border cursor-pointer transition hover:scale-105"
+                             onclick="enlargeImage('{{ question.image.url }}')">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center text-gray-600">No uploads found.</p>
+        {% endif %}
+
+        <div class="text-center mt-8">
+            <a href="{% url 'upload' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                Upload New
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal for Enlarged Image -->
+    <div id="imageModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
+        <div class="relative w-full max-w-4xl">
+            <img id="modalImage" src="" class="w-full h-auto max-h-[90vh] rounded-lg shadow-lg object-contain">
+            <button onclick="closeModal()" class="absolute top-2 right-2 bg-white text-black rounded-full px-3 py-1 text-sm shadow hover:bg-gray-200">
+                ✕ Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function enlargeImage(src) {
+            document.getElementById('modalImage').src = src;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+            document.getElementById('modalImage').src = "";
+        }
+
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") closeModal();
+        });
+    </script>
+
+</body>
+</html>

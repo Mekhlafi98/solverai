@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Syllabus and Question</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center px-4 py-6">
+    <div class="bg-white shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-2xl">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">Upload Files</h1>
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Select Existing Syllabus -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2 text-sm sm:text-base">
+                    Choose existing syllabus or upload new:
+                </label>
+                <select name="existing_syllabus" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm">
+                    <option value="">-- Upload new syllabus --</option>
+                    {% for syllabus in syllabi %}
+                        <option value="{{ syllabus.id }}">
+                            {{ syllabus.file.name }} ({{ syllabus.uploaded_at|date:"Y-m-d H:i" }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Upload New Syllabus -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2 text-sm sm:text-base">Or upload new syllabus:</label>
+                <input type="file" name="syllabus" class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+            </div>
+
+            <!-- Upload Question Image -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2 text-sm sm:text-base">Question Image:</label>
+                <input type="file" name="question" accept="image/*" id="fileInput" required class="hidden">
+                <div id="pasteArea" class="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-center text-gray-500 hover:border-blue-400 transition cursor-pointer text-sm sm:text-base">
+                    Click here or paste image (Ctrl+V)
+                </div>
+                <img id="previewImage" class="mt-4 w-full max-w-xs sm:max-w-sm mx-auto rounded-lg shadow-lg hidden" alt="Preview">
+            </div>
+
+            <!-- Custom Prompt -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2 text-sm sm:text-base">Custom Prompt (Optional):</label>
+                <textarea name="prompt" rows="4" placeholder="Extract and answer the question from this image based on the syllabus content"
+                          class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"></textarea>
+            </div>
+
+            <!-- Submit -->
+            <div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition text-sm sm:text-base">
+                    Process
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-6 text-center">
+            <a href="{% url 'history' %}" class="text-blue-600 hover:underline text-sm sm:text-base">View History</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const pasteArea = document.getElementById('pasteArea');
+            const fileInput = document.getElementById('fileInput');
+            const previewImage = document.getElementById('previewImage');
+
+            document.addEventListener('paste', function (e) {
+                const items = e.clipboardData.items;
+                for (let item of items) {
+                    if (item.type.indexOf('image') !== -1) {
+                        const file = item.getAsFile();
+                        const dt = new DataTransfer();
+                        dt.items.add(file);
+                        fileInput.files = dt.files;
+                        previewImage.src = URL.createObjectURL(file);
+                        previewImage.style.display = 'block';
+                        break;
+                    }
+                }
+            });
+
+            fileInput.addEventListener('change', function () {
+                if (this.files && this.files[0]) {
+                    previewImage.src = URL.createObjectURL(this.files[0]);
+                    previewImage.style.display = 'block';
+                }
+            });
+
+            pasteArea.addEventListener('click', function () {
+                fileInput.click();
+            });
+        });
+    </script>
+</body>
+</html>

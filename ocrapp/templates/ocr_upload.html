@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>التعرف الضوئي على الحروف العربية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white shadow-2xl rounded-2xl p-8 max-w-2xl w-full space-y-6">
+        <h2 class="text-2xl font-bold text-center text-gray-800">رفع ملف PDF للتعرف على النص العربي</h2>
+
+        <form method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            <div class="text-right">
+                {{ form.file.label_tag }}
+                <input name="file" type="file" accept=".pdf"
+                       class="block w-full mt-2 p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            </div>
+            <button type="submit"
+                    class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
+                بدء المعالجة
+            </button>
+        </form>
+
+        {% if text %}
+            <div class="bg-green-100 p-4 rounded-lg shadow-inner">
+                <h3 class="text-lg font-semibold mb-2">النص المستخرج:</h3>
+                <pre class="whitespace-pre-wrap text-gray-700">{{ text }}</pre>
+            </div>
+        {% elif error %}
+            <div class="bg-red-100 p-4 rounded-lg shadow-inner">
+                <p class="text-red-600 font-medium">{{ error }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
