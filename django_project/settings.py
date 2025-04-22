@@ -167,15 +167,15 @@ LOGGING = {
     },
 }
 
-# from django.middleware.clickjacking import XFrameOptionsMiddleware
+from django.middleware.clickjacking import XFrameOptionsMiddleware
 
-# class CustomXFrameOptionsMiddleware(XFrameOptionsMiddleware):
-#     def process_response(self, request, response):
-#         response['X-Frame-Options'] = 'ALLOW-FROM https://azeez98-solveai.hf.space'
-#         return response
+class CustomXFrameOptionsMiddleware(XFrameOptionsMiddleware):
+    def process_response(self, request, response):
+        response['X-Frame-Options'] = 'ALLOW-FROM https://azeez98-solveai.hf.space'
+        return response
 
-# MIDDLEWARE.insert(
-#     MIDDLEWARE.index('django.middleware.clickjacking.XFrameOptionsMiddleware'),
-#     'django_project.settings.CustomXFrameOptionsMiddleware'
-# )
-# MIDDLEWARE.remove('django.middleware.clickjacking.XFrameOptionsMiddleware')
+MIDDLEWARE.insert(
+    MIDDLEWARE.index('django.middleware.clickjacking.XFrameOptionsMiddleware'),
+    'django_project.settings.CustomXFrameOptionsMiddleware'
+)
+MIDDLEWARE.remove('django.middleware.clickjacking.XFrameOptionsMiddleware')
