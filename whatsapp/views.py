@@ -62,6 +62,7 @@ def handle_upload(request):
 
     genai.configure(api_key=settings.GEMINI_API_KEY)
     model_name = "gemini-2.5-pro-exp-03-25"
+    model_name = settings.MODEL_NAME
     # model_name = "gemini-1.5-flash"
     model = genai.GenerativeModel(model_name)
 
@@ -220,7 +221,8 @@ def api_upload_image_and_syllabus(request):
     # Extract question text
     try:
         pil_image = PILImage.open(question_image_file)
-        model_name = "gemini-1.5-flash"
+        # model_name = "gemini-1.5-flash"
+        model_name = settings.MODEL_NAME
         genai.configure(api_key=settings.GEMINI_API_KEY)
         model = genai.GenerativeModel(model_name)
         question_extraction_response = model.generate_content([
