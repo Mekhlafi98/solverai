@@ -1,19 +1,32 @@
 [tool.poetry]
-name = "python-template"
-version = "0.1.0"
-description = ""
 authors = ["Your Name <you@example.com>"]
-
+description = ""
+name = "django-template"
+version = "0.1.0"
 [tool.poetry.dependencies]
-python = ">=3.8.0,<3.9"
-numpy = "^1.22.2"
-replit = "^3.2.4"
-Flask = "^2.2.0"
-urllib3 = "^1.26.12"
-
+Django = "^5.0"
+python = "^3.10"
+redis = "5.0.7"
+docker = "7.1.0"
+flask = "^3.1.0"
+twilio = "^9.5.2"
+pytesseract = "^0.3.13"
+pillow = "^11.1.0"
+openai = "^1.72.0"
+requests = "^2.32.3"
+google-generativeai = "^0.8.4"
+pypdf2 = "^3.0.1"
 [tool.poetry.dev-dependencies]
-debugpy = "^1.6.2"
-replit-python-lsp-server = {extras = ["yapf", "rope", "pyflakes"], version = "^1.5.9"}
+
+[tool.pyright]
+# https://github.com/microsoft/pyright/blob/main/docs/configuration.md
+useLibraryCodeForTypes = true
+exclude = [".cache"]
+
+[tool.ruff]
+# https://beta.ruff.rs/docs/configuration/
+select = ['E', 'W', 'F', 'I', 'B', 'C4', 'ARG', 'SIM']
+ignore = ['W291', 'W292', 'W293']
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
