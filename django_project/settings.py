@@ -27,7 +27,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,.replit.dev,.replit.app").split(",")
 
-CSRF_TRUSTED_ORIGINS = ["https://*.replit.dev", "https://*.replit.app", "https://azeez98-solveai.hf.space"]
+CSRF_TRUSTED_ORIGINS = ["https://*.replit.dev", "https://*.replit.app", "https://azeez98-solveai.hf.space", "*"]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
